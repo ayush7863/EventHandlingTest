@@ -6,18 +6,23 @@ const userRouter = express.Router();
 
 userRouter.post("/register", async (req, res) => {
   const { email, name } = req.body;
+  let user = await UserModel.findOne({ email });
   try {
-    const user = new UserModel({ email, name });
-    await user.save();
-    res.send("Registration Successfully!");
+    if (!user) {
+      user = new UserModel({ email, name });
+      await user.save();
+      res.status(200).send("Registration Successfully!");
+    } else {
+      res.status(201).send("This User already exists");
+    }
   } catch (error) {
-    res.send("Registration Failed!");
+    res.status(400).send("Registration Failed!");
   }
 });
 
 userRouter.post("/login", async (req, res) => {
   const { email, name } = req.body;
-//   console.log(email)
+  //   console.log(email)
   try {
     const user = await UserModel.find({ email });
     // console.log(user.length)
@@ -25,10 +30,10 @@ userRouter.post("/login", async (req, res) => {
       const token = jwt.sign({ course: "backend" }, "ayush");
       res.status(200).send({ msg: "Login Successful", token: token });
     } else {
-      res.status(400).send({error:"Wrong Credentials"});
+      res.status(400).send({ error: "Wrong Credentials" });
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 });
 
