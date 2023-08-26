@@ -29,7 +29,13 @@ const Login = () => {
     })
       .then((res) => res.json())
       .then((res) => {
-        localStorage.setItem("token", res.token);
+        if (res.msg === "Login Successful") {
+          localStorage.setItem("token", JSON.stringify(res.token));
+          alert("Login Successful");
+          navigate("/record");
+        } else {
+          alert("Wrong Credentials");
+        }
       })
       .catch((err) => console.log(err));
     setLogin(initialState);
