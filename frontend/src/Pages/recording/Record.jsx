@@ -14,9 +14,10 @@ const Record = () => {
   useEffect(() => {
     const openCamera = async () => {
       const useStream = await navigator.mediaDevices.getUserMedia({
-        // video: true,
+        video: true,
         audio: true,
       });
+      // console.log(useStream.getTracks())
       setStream(useStream);
       videoRef.current.srcObject = useStream;
     };
@@ -37,14 +38,20 @@ const Record = () => {
 
   const stopRecording = () => {
     alert("Recording Stop");
-    mediaRecorder.stop();
+    // mediaRecorder.stop();
+    if (stream) {
+      const tracks = stream.getTracks();
+      console.log(tracks);
+      tracks.forEach((track) => track.stop());
+      videoRef.current.srcObject = null;
+      setStream(null);
+    }
   };
   const saveRecording = () => {
     const blob = new Blob(recordedChunks, { type: "video/webm" });
     const url = URL.createObjectURL(blob);
-    // let getUrl = JSON.parse(localStorage.getItem("recordingURL")) || [];
 
-    let URL = localStorage.setItem("recordingUrl", url);
+    localStorage.setItem("recordingUrl", url);
     const a = document.createElement("a");
     a.href = url;
     a.download = "recorded-video.webm";
@@ -54,6 +61,13 @@ const Record = () => {
   };
 
   const handleLogOut = () => {
+    if (stream) {
+      const tracks = stream.getTracks();
+      console.log(tracks);
+      tracks.forEach((track) => track.stop());
+      videoRef.current.srcObject = null;
+      setStream(null);
+    }
     localStorage.removeItem("token");
     navigate("/");
   };
