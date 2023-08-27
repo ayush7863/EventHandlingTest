@@ -18,7 +18,7 @@ const Register = () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch("http://localhost:8080/user/register", {
+    fetch("https://event-handling.onrender.com/user/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
